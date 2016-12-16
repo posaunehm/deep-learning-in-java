@@ -71,6 +71,8 @@ public class Application {
             }
         }
 
+        System.out.println(String.format("%d data used for training.", epoch));
+
         for(int i =0; i < test_N; i++){
             prediction_T[i] = classifier.predict(test_X[i]);
         }
