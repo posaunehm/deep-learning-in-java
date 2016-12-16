@@ -1,12 +1,20 @@
 package hm.posaune.deepLearningInJava;
 
 import hm.posaune.deepLearningInJava.util.GaussianDistribution;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final int train_N = 1000;
         final int test_N = 200;
         final int nIn = 2;
@@ -76,5 +84,68 @@ public class Application {
         for(int i =0; i < test_N; i++){
             prediction_T[i] = classifier.predict(test_X[i]);
         }
+
+        XYSeriesCollection data = new XYSeriesCollection();
+
+        XYSeries series_1 = new XYSeries("系列1");
+        XYSeries series_2 = new XYSeries("系列2");
+
+        data.addSeries(series_1);
+        data.addSeries(series_2);
+
+        for(int i =0; i < test_N / 2; i++){
+            series_1.add(test_X[i][0], test_X[i][1]);
+        }
+
+        for(int i =test_N / 2; i < test_N; i++){
+            series_2.add(test_X[i][0], test_X[i][1]);
+        }
+
+
+
+        JFreeChart chart_1 = ChartFactory.createScatterPlot(
+                "実データ",
+                "X",
+                "Y",
+                data,
+                PlotOrientation.VERTICAL,
+                true,
+                false,
+                false);
+
+        ChartUtilities.saveChartAsPNG(
+                new File("./dataSource.png"),
+                chart_1, 300, 300);
+
+        XYSeriesCollection predictionData = new XYSeriesCollection();
+
+        XYSeries series_prediction_1 = new XYSeries("系列1");
+        XYSeries series_prediction_2 = new XYSeries("系列2");
+
+        predictionData.addSeries(series_prediction_1);
+        predictionData.addSeries(series_prediction_2);
+
+        for(int i =0; i < test_N; i++){
+            if(prediction_T[i] == 1) {
+                series_prediction_1.add(test_X[i][0], test_X[i][1]);
+            }else{
+                series_prediction_2.add(test_X[i][0], test_X[i][1]);
+            }
+        }
+
+        JFreeChart chart_2 = ChartFactory.createScatterPlot(
+                "予測値",
+                "X",
+                "Y",
+                predictionData,
+                PlotOrientation.VERTICAL,
+                true,
+                false,
+                false);
+
+        ChartUtilities.saveChartAsPNG(
+                new File("./prediction.png"), chart_2, 300, 300);
+
+
     }
 }

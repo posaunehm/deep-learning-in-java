@@ -2,3 +2,5 @@
 build
 .gradle
 *.iml
+dataSource.png
+prediction.png
